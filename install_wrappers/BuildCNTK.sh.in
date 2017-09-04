@@ -1,0 +1,23 @@
+cd @PROJECT_BINARY_DIR@/3rdparty/spack
+rm -f @PROJECT_BINARY_DIR@/3rdparty/spack/results.txt
+lfs setstripe -c 1 @PROJECT_BINARY_DIR@/3rdparty/spack 
+echo "======== Downloading CNTK ========"
+@PROJECT_BINARY_DIR@/3rdparty/spack/bin/spack --insecure mirror create -d @PROJECT_BINARY_DIR@/3rdparty/spack/localmirror -D cntk +cuda +debug %gcc@4.9.3
+echo "======== Launching Build Job ========"
+qsub @PROJECT_BINARY_DIR@/wrappers/BuildCNTK.ksh
+echo "======== Waiting for build job to complete ========"
+while [ ! -f @PROJECT_BINARY_DIR@/3rdparty/spack/results.txt ]
+do
+  sleep 2
+done
+
+if grep -Fq "cntk" @PROJECT_BINARY_DIR@/3rdparty/spack/results.txt 
+then
+	echo "======== OpenMPI was build successfully ========"
+	exit 0
+else 
+	echo "======== OpenMPI building failed ========"
+	exit -1
+fi
+source @PROJECT_BINARY_DIR@/3rdparty/spack/share/spack/setup-env.sh
+
