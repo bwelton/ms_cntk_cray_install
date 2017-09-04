@@ -33,6 +33,12 @@ configure_file (
 	"${PROJECT_BINARY_DIR}/wrappers/BuildCNTK.sh"
 	@ONLY
 )
+configure_file (
+    "${PROJECT_SOURCE_DIR}/install_wrappers/SetModuleEnv.sh.in"
+	"${PROJECT_BINARY_DIR}/wrappers/SetModuleEnv.sh"
+	@ONLY
+)
+
 
 ExternalProject_Add(
 	spack 
